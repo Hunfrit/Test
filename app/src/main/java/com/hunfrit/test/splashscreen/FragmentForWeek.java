@@ -147,7 +147,7 @@ public class FragmentForWeek extends Fragment implements MainActivity.MainActivi
 
             mChart.setData(data);
 
-            mChart.animateY(500);
+            mChart.animateXY(1000, 500);
 
             mChart.invalidate();
 

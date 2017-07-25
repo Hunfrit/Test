@@ -5,6 +5,7 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.BoolRes;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -97,6 +98,8 @@ public class MainActivity extends AppCompatActivity {
                 getValue();
 
                 mSendToFragmentForWeek.checkOnHide(checkOnHide = 1);
+                byDate = new getRateByDate();
+                byDate.execute();
             }
         });
 
@@ -105,7 +108,7 @@ public class MainActivity extends AppCompatActivity {
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
 
         adapter.addFragment(new FragmentForToday(), "TODAY");
-        adapter.addFragment(new FragmentForWeek(), "WEEK");
+        adapter.addFragment(new FragmentForWeek(), "1 WEEK");
         viewPager.setAdapter(adapter);
 
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
@@ -256,30 +259,42 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
-    class getRateByDate extends AsyncTask<Void, Void, Void> {
+    class getRateByDate extends AsyncTask<Void, Void, Boolean> {
+
 
         @Override
-        protected Void doInBackground(Void... voids) {
+        protected Boolean doInBackground(Void... voids) {
+
+            checkOnFail = 0;
+
             DateTimeFormatter format = DateTimeFormat.forPattern("yyyyMMdd");
             DateTimeFormatter formatForGraph = DateTimeFormat.forPattern("dd.MM");
             DateTime now = DateTime.now();
             DateTime week = now.minusWeeks(1);
-            for (int i = 0; i<=6; i++){
-                now = week.plusDays(i+1);
-                postForWeek = getByDate(String.valueOf(String.valueOf(format.print(now)))).get(0);
-                Log.d("myLogs" , "GG" + String.valueOf(postForWeek.getRate()));
-                resultByDate[i] = postForWeek.getRate();
-                dayByDate[i] = formatForGraph.print(now);
+            if (getByDate(String.valueOf(format.print(now))) != null) {
+                for (int i = 0; i <= 6; i++) {
+                    now = week.plusDays(i + 1);
+                    postForWeek = getByDate(String.valueOf(format.print(now))).get(0);
+                    Log.d("myLogs", "GG" + String.valueOf(postForWeek.getRate()));
+                    resultByDate[i] = postForWeek.getRate();
+                    dayByDate[i] = formatForGraph.print(now);
+                }
+            }else{
+                return false;
             }
             checkOnHide = 0;
-            return null;
+            return true;
         }
 
         @Override
-        protected void onPostExecute(Void result) {
+        protected void onPostExecute(Boolean result) {
             super.onPostExecute(result);
             Log.d("myLogs", "WTF");
-            mSendToFragmentForWeek.valueChanged(resultByDate, dayByDate);
+            if (result){
+                mSendToFragmentForWeek.valueChanged(resultByDate, dayByDate);
+            } else {
+                mSendToFragmentForWeek.checkOnFail(checkOnFail = 1);
+            }
         }
     }
 
@@ -294,6 +309,7 @@ public class MainActivity extends AppCompatActivity {
             }
         } catch (IOException e) {
             e.printStackTrace();
+            Log.d("myLogs", e.getMessage());
         }
         return null;
 
