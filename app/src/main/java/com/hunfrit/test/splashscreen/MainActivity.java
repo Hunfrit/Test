@@ -124,6 +124,10 @@ public class MainActivity extends AppCompatActivity {
             public void onTabReselected(TabLayout.Tab tab) {
                 mSendToFragment.checkOnHide(checkOnHide = 1);       //SET (INTERFACE) checkOnHide - true
                 getValue();
+
+                mSendToFragmentForWeek.checkOnHide(checkOnHide = 1);
+                byDate = new getRateByDate();
+                byDate.execute();
             }
         });
 
