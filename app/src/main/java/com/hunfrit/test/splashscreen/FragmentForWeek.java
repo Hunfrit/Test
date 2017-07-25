@@ -73,11 +73,13 @@ public class FragmentForWeek extends Fragment implements MainActivity.MainActivi
         l.setOrientation(Legend.LegendOrientation.HORIZONTAL);
         l.setDrawInside(false);
 
+        mChart.animateY(1000);
         mChart.getAxisLeft().setEnabled(true);
     }
 
     private void setData(float values[], final String dates[]) {
 
+        showElement();
 
         ArrayList<Entry> entryValues = new ArrayList<Entry>();
 
@@ -91,8 +93,6 @@ public class FragmentForWeek extends Fragment implements MainActivity.MainActivi
                 return dates[(int) value % dates.length];
             }
         });
-
-        showElement();
 
         LineDataSet set1;
 
@@ -146,9 +146,6 @@ public class FragmentForWeek extends Fragment implements MainActivity.MainActivi
             // set data
 
             mChart.setData(data);
-
-            mChart.animateXY(1000, 500);
-
             mChart.invalidate();
 
         }
@@ -194,7 +191,7 @@ public class FragmentForWeek extends Fragment implements MainActivity.MainActivi
     }
 
     private void hideElement(){
-        mChart.setVisibility(View.INVISIBLE);
+        mChart.setVisibility(View.GONE);
         progressBarInGraph.setVisibility(View.VISIBLE);
     }
 
