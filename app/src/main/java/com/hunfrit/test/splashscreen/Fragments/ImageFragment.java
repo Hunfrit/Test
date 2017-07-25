@@ -9,9 +9,6 @@ import android.view.ViewGroup;
 
 import com.hunfrit.test.R;
 
-/**
- * Created by Anoli on 06.07.2017.
- */
 
 public class ImageFragment extends Fragment {
     @Nullable

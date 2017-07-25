@@ -3,4 +3,5 @@
     <string name="history">Exchange rates history</string>
     <string name="USDtoUAH">1 USD to UAH</string>
     <string name="laer">Latest available exchange rate</string>
+    <string name="refreshOnTab">To refresh current page - swipe down the screen or click on selected tab</string>
 </resources>

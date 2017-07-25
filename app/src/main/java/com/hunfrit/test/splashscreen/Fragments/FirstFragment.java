@@ -8,10 +8,8 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.hunfrit.test.R;
+import com.hunfrit.test.splashscreen.MainActivity;
 
-/**
- * Created by Anoli on 06.07.2017.
- */
 
 public class FirstFragment extends Fragment {
     @Nullable
