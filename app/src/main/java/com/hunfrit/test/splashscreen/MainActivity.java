@@ -5,7 +5,6 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.annotation.BoolRes;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -29,7 +28,6 @@ import org.joda.time.format.DateTimeFormatter;
 import java.io.EOFException;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import retrofit2.Callback;
@@ -125,10 +123,10 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onTabReselected(TabLayout.Tab tab) {
-                mSendToFragment.checkOnHide(checkOnHide = 1);       //SET (INTERFACE) checkOnHide - true
+                mSendToFragment.checkOnHide(checkOnHide = 1);       //SET (INTERFACE) checkOnHide for fragment for today - true
                 getValue();
 
-                mSendToFragmentForWeek.checkOnHide(checkOnHide = 1);
+                mSendToFragmentForWeek.checkOnHide(checkOnHide = 1);        //SET (INTERFACE) checkOnHide for fragment for week - true
                 byDate = new getRateByDate();
                 byDate.execute();
             }
@@ -170,7 +168,6 @@ public class MainActivity extends AppCompatActivity {
                     today = post.getExchangedate();
                     checkOnHide = 0;            // SET (INTERFACE) checkOnHide - false;
                     mSendToFragment.valueChanged(result, today);
-                    swipeRefreshLayout.setRefreshing(false);
                     Log.d("myLogs" , "WORK " + result);
                 } else
                     switch (response.code()){
@@ -178,13 +175,11 @@ public class MainActivity extends AppCompatActivity {
                         case HTTP_UNAVAILABLE:
                         case HTTP_INTERNAL_ERROR:
                             showDialog(ServerErrorDialog);
-                            swipeRefreshLayout.setRefreshing(false);
                             break;
                         default:
                             showDialog(ServerErrorDialog);
-                            swipeRefreshLayout.setRefreshing(false);
                 }
-
+                swipeRefreshLayout.setRefreshing(false);
             }
 
             @Override
@@ -261,7 +256,6 @@ public class MainActivity extends AppCompatActivity {
 
     class getRateByDate extends AsyncTask<Void, Void, Boolean> {
 
-
         @Override
         protected Boolean doInBackground(Void... voids) {
 
@@ -273,9 +267,8 @@ public class MainActivity extends AppCompatActivity {
             DateTime week = now.minusWeeks(1);
             if (getByDate(String.valueOf(format.print(now))) != null) {
                 for (int i = 0; i <= 6; i++) {
-                    now = week.plusDays(i + 1);
+                    now = week.plusDays(i + 1);     // i + 1 ~~~ because after minusWeek(1) we gonna get on one day earlier than necessary
                     postForWeek = getByDate(String.valueOf(format.print(now))).get(0);
-                    Log.d("myLogs", "GG" + String.valueOf(postForWeek.getRate()));
                     resultByDate[i] = postForWeek.getRate();
                     dayByDate[i] = formatForGraph.print(now);
                 }
@@ -289,7 +282,6 @@ public class MainActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(Boolean result) {
             super.onPostExecute(result);
-            Log.d("myLogs", "WTF");
             if (result){
                 mSendToFragmentForWeek.valueChanged(resultByDate, dayByDate);
             } else {
@@ -304,7 +296,6 @@ public class MainActivity extends AppCompatActivity {
             if (response.isSuccessful()){
                 setGetForWeek = response.body();
                 postForWeek = setGetForWeek.get(0);
-                Log.d("myLogs", "WTF" + postForWeek.getTxt() + postForWeek.getExchangedate());
                 return setGetForWeek;
             }
         } catch (IOException e) {
