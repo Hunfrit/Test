@@ -133,6 +133,16 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(URL)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+
+
+        rate = retrofit.create(Link.class);
+        setGet = new ArrayList<>();
+
+
         getValue();
 
         byDate = new getRateByDate();
@@ -144,15 +154,6 @@ public class MainActivity extends AppCompatActivity {
 
     public void getValue() {
 
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(URL)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-
-
-        rate = retrofit.create(Link.class);
-        setGet = new ArrayList<>();
-
 
             rate.getRate().enqueue(new Callback<List<SetGet>>() {
             @Override
@@ -162,6 +163,13 @@ public class MainActivity extends AppCompatActivity {
                 //Check responce on successful
 
                 if (response.isSuccessful()){
+                    if (String.valueOf(response.body()) == "[]"){
+
+                        // If NBU don`t have time to fill data, we will get the data like '[]', so we gonna get crash
+
+                        showDialog(ServerErrorDialog);
+                        return;
+                    }
                     setGet.addAll(response.body());
                     post = setGet.get(0);
                     result = post.getRate();
@@ -285,7 +293,7 @@ public class MainActivity extends AppCompatActivity {
             if (result){
                 mSendToFragmentForWeek.valueChanged(resultByDate, dayByDate);
             } else {
-                mSendToFragmentForWeek.checkOnFail(checkOnFail = 1);
+                mSendToFragmentForWeek.checkOnFail(checkOnFail = 1);        //Set graph data like 0,0,0,0,0,0,0 and 00/00, 00/00...
             }
         }
     }
@@ -294,6 +302,12 @@ public class MainActivity extends AppCompatActivity {
         try {
             Response<List<SetGet>> response = rate.getRateByDate(date).execute();
             if (response.isSuccessful()){
+                if (String.valueOf(response.body()) == "[]"){
+
+                    // If NBU don`t have time to fill data, we will get the data like '[]', so we gonna get crash
+
+                    return null;
+                }
                 setGetForWeek = response.body();
                 postForWeek = setGetForWeek.get(0);
                 return setGetForWeek;
