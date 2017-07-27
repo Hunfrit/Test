@@ -168,6 +168,7 @@ public class MainActivity extends AppCompatActivity {
                         // If NBU don`t have time to fill data, we will get the data like '[]', so we gonna get crash
 
                         showDialog(ServerErrorDialog);
+                        swipeRefreshLayout.setRefreshing(false);
                         return;
                     }
                     setGet.addAll(response.body());
