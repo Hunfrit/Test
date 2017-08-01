@@ -29,6 +29,8 @@ public class RateForToday {
     final int DIALOG = 1337;
     final int ServerErrorDialog = 1488;
 
+    boolean check;      //checking on necessary to show dialog
+
     MainView view;
 
     public RateForToday(MainView view){
@@ -55,6 +57,7 @@ public class RateForToday {
         rate.getRate().enqueue(new Callback<List<SetGet>>() {
             @Override
             public void onResponse(Call<List<SetGet>> call, Response<List<SetGet>> response) {
+                check = false;
                 Log.d("myLogs", "FOR TODAY: ");
                 //Check responce on successful
 
@@ -63,7 +66,9 @@ public class RateForToday {
                     if (String.valueOf(response.body()) == "[]") {
 
                         // If NBU don`t have time to fill data, we will get the data like '[]', so we gonna get crash
-                        view.showError(ServerErrorDialog);
+                        check = true;
+
+                        view.showError(check, ServerErrorDialog);
 
                         return;
                     }
@@ -72,27 +77,29 @@ public class RateForToday {
                     view.resultForTodayIsSuccessful(post.getRate(), post.getExchangedate());
                     Log.d("myLogs", "WORK " + post.getRate());
                 } else
+                    check = true;
                     Log.d("TAGA", String.valueOf(response.code()));
                     switch (response.code()) {
                         case HTTP_NOT_FOUND:
                         case HTTP_UNAVAILABLE:
                         case HTTP_INTERNAL_ERROR:
-                            view.showError(ServerErrorDialog);
+                            view.showError(check, ServerErrorDialog);
                             break;
                         default:
-                            view.showError(ServerErrorDialog);
+                            view.showError(check, ServerErrorDialog);
                     }
 
             }
 
             @Override
             public void onFailure(Call<List<SetGet>> call, Throwable t) {
+                check = true;
                 if (t instanceof EOFException) {
-                    view.showError(DIALOG);
+                    view.showError(check, DIALOG);
                 } else if (t instanceof IOException) {
-                    view.showError(DIALOG);
+                    view.showError(check, DIALOG);
                 } else {
-                    view.showError(DIALOG);
+                    view.showError(check, DIALOG);
                 }
                 Log.d("myLogs", String.valueOf(t));
 

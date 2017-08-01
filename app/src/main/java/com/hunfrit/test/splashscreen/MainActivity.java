@@ -59,10 +59,12 @@ public class MainActivity extends AppCompatActivity implements MainView{
     }
 
     @Override
-    public void showError(int index) {
-        showDialog(index);
-        Log.d("TAGA", "is it work?");
-        swipeRefreshLayout.setRefreshing(false);
+    public void showError(boolean check, int index) {
+        if (check){
+            showDialog(index);
+            Log.d("TAGA", "is it work?");
+            swipeRefreshLayout.setRefreshing(false);
+        }
     }
 
     interface MainActivityCommunicator {

@@ -12,6 +12,6 @@ public interface MainView {
 
     void resultForTodayIsSuccessful(float resultForToday, String date);
 
-    void showError(int index);
+    void showError(boolean check, int index);
 
 }
