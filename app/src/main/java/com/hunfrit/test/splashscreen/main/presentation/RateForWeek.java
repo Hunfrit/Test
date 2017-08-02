@@ -16,10 +16,6 @@ import java.util.List;
 
 import retrofit2.Response;
 
-/**
- * Created by Anoli on 01.08.2017.
- */
-
 public class RateForWeek extends AsyncTask<Link, Void, Boolean>{
 
     private MainView view;
