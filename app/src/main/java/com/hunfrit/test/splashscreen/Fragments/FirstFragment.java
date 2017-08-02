@@ -8,7 +8,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.hunfrit.test.R;
-import com.hunfrit.test.splashscreen.MainActivity;
 
 
 public class FirstFragment extends Fragment {

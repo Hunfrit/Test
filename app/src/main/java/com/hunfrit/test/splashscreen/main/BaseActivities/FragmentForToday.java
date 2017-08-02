@@ -1,4 +1,4 @@
-package com.hunfrit.test.splashscreen;
+package com.hunfrit.test.splashscreen.main.BaseActivities;
 
 import android.app.Activity;
 import android.content.Context;
