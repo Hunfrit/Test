@@ -1,10 +1,8 @@
 package com.hunfrit.test.splashscreen.main.presentation;
 
 import android.os.AsyncTask;
-import android.speech.tts.Voice;
 import android.util.Log;
 
-import com.github.mikephil.charting.charts.LineChart;
 import com.hunfrit.test.splashscreen.Interface.Link;
 import com.hunfrit.test.splashscreen.SetGet.SetGet;
 
@@ -17,25 +15,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
  * Created by Anoli on 01.08.2017.
  */
 
-public class RateForWeek extends AsyncTask<Void, Void, Boolean>{
+public class RateForWeek extends AsyncTask<Link, Void, Boolean>{
 
     private MainView view;
-
-    static final String URL = "https://bank.gov.ua/";
 
     List<SetGet> setGetForWeek;
     SetGet postForWeek;
 
     Short checkOnFail = 0;
-
-    Link rate;
 
     float[] resultByDate = new float[7];
     String[] dayByDate = new String[7];
@@ -45,26 +37,25 @@ public class RateForWeek extends AsyncTask<Void, Void, Boolean>{
     }
 
     @Override
-    protected Boolean doInBackground(Void... voids) {
+    protected void onPreExecute() {
+        super.onPreExecute();
+    }
+
+    @Override
+    protected Boolean doInBackground(Link... rate) {
 
         checkOnFail = 0;
 
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(URL)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-
-        rate = retrofit.create(Link.class);
         setGetForWeek = new ArrayList<>();
 
         DateTimeFormatter format = DateTimeFormat.forPattern("yyyyMMdd");
         DateTimeFormatter formatForGraph = DateTimeFormat.forPattern("dd.MM");
         DateTime now = DateTime.now();
         DateTime week = now.minusWeeks(1);
-        if (getByDate(String.valueOf(format.print(now))) != null) {
+        if (getByDate(String.valueOf(format.print(now)), rate) != null) {
             for (int i = 0; i <= 6; i++) {
                 now = week.plusDays(i + 1);     // i + 1 ~~~ because after minusWeek(1) we gonna get on one day earlier than necessary
-                postForWeek = getByDate(String.valueOf(format.print(now))).get(0);
+                postForWeek = getByDate(String.valueOf(format.print(now)), rate).get(0);
                 resultByDate[i] = postForWeek.getRate();
                 dayByDate[i] = formatForGraph.print(now);
                 Log.d("TAGA", String.valueOf(resultByDate[i]));
@@ -86,9 +77,9 @@ public class RateForWeek extends AsyncTask<Void, Void, Boolean>{
         }
     }
 
-    public List<SetGet> getByDate(String date) {
+    public List<SetGet> getByDate(String date, Link rate[]) {
         try {
-            Response<List<SetGet>> response = rate.getRateByDate(date).execute();
+            Response<List<SetGet>> response = rate[0].getRateByDate(date).execute();        // rate[0] ~~~ because AsyncTask use (Link... like massive). So we take first element
             if (response.isSuccessful()) {
                 if (String.valueOf(response.body()) == "[]") {
 

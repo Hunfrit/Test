@@ -13,21 +13,14 @@ import java.util.List;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
+import static com.hunfrit.test.splashscreen.Constants.Constants.DIALOG;
+import static com.hunfrit.test.splashscreen.Constants.Constants.ServerErrorDialog;
 import static java.net.HttpURLConnection.HTTP_INTERNAL_ERROR;
 import static java.net.HttpURLConnection.HTTP_NOT_FOUND;
 import static java.net.HttpURLConnection.HTTP_UNAVAILABLE;
 
-/**
- * Created by Anoli on 01.08.2017.
- */
-
 public class RateForToday {
-
-    final int DIALOG = 1337;
-    final int ServerErrorDialog = 1488;
 
     boolean check;      //checking on necessary to show dialog
 
@@ -37,21 +30,11 @@ public class RateForToday {
         this.view = view;
     }
 
-    static final String URL = "https://bank.gov.ua/";
-
     List<SetGet> setGet;
     SetGet post;
 
-    Link rate;
+    public void getValue(Link rate){
 
-    public void getValue(){
-
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(URL)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-
-        rate = retrofit.create(Link.class);
         setGet = new ArrayList<>();
 
         rate.getRate().enqueue(new Callback<List<SetGet>>() {

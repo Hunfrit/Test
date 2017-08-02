@@ -17,12 +17,16 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.hunfrit.test.R;
+import com.hunfrit.test.splashscreen.Api.Retrofit.ApiRetrofit;
 import com.hunfrit.test.splashscreen.main.presentation.MainView;
 import com.hunfrit.test.splashscreen.main.presentation.RateForToday;
 import com.hunfrit.test.splashscreen.main.presentation.RateForWeek;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.hunfrit.test.splashscreen.Constants.Constants.DIALOG;
+import static com.hunfrit.test.splashscreen.Constants.Constants.ServerErrorDialog;
 
 
 public class MainActivity extends AppCompatActivity implements MainView{
@@ -31,14 +35,14 @@ public class MainActivity extends AppCompatActivity implements MainView{
     private RateForWeek rateForWeek;
     private RateForToday rateForToday;
 
+    ApiRetrofit api;
+
     MainActivityCommunicator mSendToFragment;
     MainActivityCommunicatorForWeek mSendToFragmentForWeek;
 
-    final int DIALOG = 1337;
-    final int ServerErrorDialog = 1488;
     Dialog dialog;
 
-    public short checkOnHide = 0;
+    short checkOnHide = 0;
 
     @Override
     public void resultForWeekIsSuccessful(float[] resultByDate, String[] dayByDate) {
@@ -94,12 +98,12 @@ public class MainActivity extends AppCompatActivity implements MainView{
             public void onRefresh() {
                 mSendToFragment.checkOnHide(checkOnHide = 1);
                 rateForToday = new RateForToday(MainActivity.this);
-                rateForToday.getValue();
+                rateForToday.getValue(api.getRetrofit());
 
 
                 mSendToFragmentForWeek.checkOnHide(checkOnHide = 1);
                 rateForWeek = new RateForWeek(MainActivity.this);
-                rateForWeek.execute();
+                rateForWeek.execute(api.getRetrofit());
 
             }
         });
@@ -128,19 +132,21 @@ public class MainActivity extends AppCompatActivity implements MainView{
             public void onTabReselected(TabLayout.Tab tab) {
                 mSendToFragment.checkOnHide(checkOnHide = 1);       //SET (INTERFACE) checkOnHide for fragment for today - true
                 rateForToday = new RateForToday(MainActivity.this);
-                rateForToday.getValue();
+                rateForToday.getValue(api.getRetrofit());
 
                 mSendToFragmentForWeek.checkOnHide(checkOnHide = 1);        //SET (INTERFACE) checkOnHide for fragment for week - true
                 rateForWeek = new RateForWeek(MainActivity.this);
-                rateForWeek.execute();
+                rateForWeek.execute(api.getRetrofit());
             }
         });
 
+        api = new ApiRetrofit(this);
+
         rateForToday = new RateForToday(this);
-        rateForToday.getValue();
+        rateForToday.getValue(api.getRetrofit());
 
         rateForWeek = new RateForWeek(this);
-        rateForWeek.execute();
+        rateForWeek.execute(api.getRetrofit());
     }
 
     @Override
