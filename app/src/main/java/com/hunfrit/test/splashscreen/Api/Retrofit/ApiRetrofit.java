@@ -1,11 +1,11 @@
 package com.hunfrit.test.splashscreen.Api.Retrofit;
 
-import com.hunfrit.test.splashscreen.Constants.Constants;
-import com.hunfrit.test.splashscreen.Interface.Link;
-import com.hunfrit.test.splashscreen.main.presentation.MainView;
+import com.hunfrit.test.splashscreen.Api.ApiService.ApiRateService;
 
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
+
+import static com.hunfrit.test.splashscreen.Constants.Constants.URL;
 
 /**
  * Created by Artem Shapovalov on 02.08.2017.
@@ -13,24 +13,16 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class ApiRetrofit {
 
-    MainView view;
+    public static ApiRateService getRetrofit(){
 
-    Constants constants;
-
-    public ApiRetrofit(MainView view){
-        this.view = view;
-    }
-
-    public Link getRetrofit(){
-
-        Link rate;
+        ApiRateService rate;
 
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(constants.URL)
+                .baseUrl(URL)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 
-        rate = retrofit.create(Link.class);
+        rate = retrofit.create(ApiRateService.class);
 
         return rate;
     }

@@ -1,6 +1,5 @@
 package com.hunfrit.test.splashscreen.main.BaseActivities;
 
-import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -26,13 +25,13 @@ import com.hunfrit.test.R;
 
 import java.util.ArrayList;
 
-public class FragmentForWeek extends Fragment implements MainActivity.MainActivityCommunicatorForWeek{
+public class ForWeekFragment extends Fragment implements MainActivity.MainActivityCommunicatorForWeek{
 
     private LineChart mChart;
 
-    ProgressBar progressBarInGraph;
+    private ProgressBar mProgressBarInGraph;
 
-    XAxis xAxis;
+    private XAxis mXAxis;
 
     @Nullable
     @Override
@@ -41,12 +40,12 @@ public class FragmentForWeek extends Fragment implements MainActivity.MainActivi
     }
 
     @Override
-    public void onStart() {
-        super.onStart();
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
 
-        progressBarInGraph = (ProgressBar) getActivity().findViewById(R.id.progressBar3);
+        mProgressBarInGraph = (ProgressBar) view.findViewById(R.id.progressBar3);
 
-        mChart = (LineChart) getActivity().findViewById(R.id.chart1);
+        mChart = (LineChart) view.findViewById(R.id.chart1);
         mChart.setDrawGridBackground(false);
         mChart.getDescription().setEnabled(false);
         mChart.setTouchEnabled(false);
@@ -60,10 +59,10 @@ public class FragmentForWeek extends Fragment implements MainActivity.MainActivi
         leftAxis.setDrawGridLines(false);
         leftAxis.setEnabled(false);
 
-        xAxis = mChart.getXAxis();
-        xAxis.setDrawGridLines(true);
-        xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
-        xAxis.setGranularity(1f);
+        mXAxis = mChart.getXAxis();
+        mXAxis.setDrawGridLines(true);
+        mXAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
+        mXAxis.setGranularity(1f);
 
         Legend l = mChart.getLegend();
         l.setWordWrapEnabled(true);
@@ -86,7 +85,7 @@ public class FragmentForWeek extends Fragment implements MainActivity.MainActivi
             entryValues.add(new Entry(i, values[i]));
         }
 
-        xAxis.setValueFormatter(new IAxisValueFormatter() {
+        mXAxis.setValueFormatter(new IAxisValueFormatter() {
             @Override
             public String getFormattedValue(float value, AxisBase axis) {
                 return dates[(int) value % dates.length];
@@ -151,10 +150,18 @@ public class FragmentForWeek extends Fragment implements MainActivity.MainActivi
 
     }
 
+    /*
     @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        Context context = getActivity();
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        AppCompatActivity activity = (AppCompatActivity) getActivity();
+
+        ....For normal work with activity....
+     */
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
         ((MainActivity) context).mSendToFragmentForWeek = this;
     }
 
@@ -162,7 +169,7 @@ public class FragmentForWeek extends Fragment implements MainActivity.MainActivi
     public void onDetach() {
         super.onDetach();
         Context context = getActivity();
-        ((MainActivity) context).mSendToFragmentForWeek = this;
+        ((MainActivity) context).mSendToFragmentForWeek = null;
     }
 
     @Override
@@ -171,27 +178,27 @@ public class FragmentForWeek extends Fragment implements MainActivity.MainActivi
     }
 
     @Override
-    public void checkOnFail(Short check) {
+    public void checkOnFail(short check) {
         if (check == 1){
             setDataFail();
         }
     }
 
     @Override
-    public void checkOnHide(Short check) {
+    public void checkOnHide(short check) {
         if (check == 1) {
             hideElement();
         }
     }
 
     private void showElement(){
-        progressBarInGraph.setVisibility(View.GONE);
+        mProgressBarInGraph.setVisibility(View.GONE);
         mChart.setVisibility(View.VISIBLE);
     }
 
     private void hideElement(){
         mChart.setVisibility(View.GONE);
-        progressBarInGraph.setVisibility(View.VISIBLE);
+        mProgressBarInGraph.setVisibility(View.VISIBLE);
     }
 
     private void setDataFail(){

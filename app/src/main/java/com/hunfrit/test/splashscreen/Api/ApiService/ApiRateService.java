@@ -1,4 +1,4 @@
-package com.hunfrit.test.splashscreen.Interface;
+package com.hunfrit.test.splashscreen.Api.ApiService;
 
 import com.hunfrit.test.splashscreen.SetGet.SetGet;
 
@@ -8,7 +8,7 @@ import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.Query;
 
-public interface Link {
+public interface ApiRateService {
     @GET("NBUStatService/v1/statdirectory/exchange?valcode=USD&json")
     Call<List<SetGet>> getRate();
 

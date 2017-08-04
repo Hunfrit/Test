@@ -13,7 +13,7 @@ import android.widget.TextView;
 
 import com.hunfrit.test.R;
 
-public class FragmentForToday extends Fragment implements MainActivity.MainActivityCommunicator {
+public class ForTodayFragment extends Fragment implements MainActivity.MainActivityCommunicator {
 
     TextView value, today, text;
     ProgressBar progressBar;
@@ -24,25 +24,23 @@ public class FragmentForToday extends Fragment implements MainActivity.MainActiv
         return inflater.inflate(R.layout.fragment_for_today, container, false);
     }
 
-    public FragmentForToday(){
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        value = (TextView) view.findViewById(R.id.value);
+        today = (TextView) view.findViewById(R.id.today);
+        text = (TextView) view.findViewById(R.id.text);
+        progressBar = (ProgressBar) view.findViewById(R.id.progressBar);
+    }
+
+    public ForTodayFragment(){
     }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
     }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-
-        value = (TextView) getActivity().findViewById(R.id.value);
-        today = (TextView) getActivity().findViewById(R.id.today);
-        text = (TextView) getActivity().findViewById(R.id.text);
-        progressBar = (ProgressBar) getActivity().findViewById(R.id.progressBar);
-
-    }
-
 
     public void showElements(){
         progressBar.setVisibility(View.GONE);
@@ -73,14 +71,14 @@ public class FragmentForToday extends Fragment implements MainActivity.MainActiv
     }
 
     @Override
-    public void valueChanged(Float res, String string) {
+    public void valueChanged(float res, String string) {
         value.setText(String.valueOf(res));
         today.setText(string);
         showElements();
     }
 
     @Override
-    public void checkOnHide(Short check) {
+    public void checkOnHide(short check) {
         if (check == 1){
             hideElements();
         }

@@ -2,8 +2,9 @@ package com.hunfrit.test.splashscreen.main.presentation;
 
 import android.util.Log;
 
-import com.hunfrit.test.splashscreen.Interface.Link;
+import com.hunfrit.test.splashscreen.Api.ApiService.ApiRateService;
 import com.hunfrit.test.splashscreen.SetGet.SetGet;
+import com.hunfrit.test.splashscreen.main.View.MainView;
 
 import java.io.EOFException;
 import java.io.IOException;
@@ -15,25 +16,25 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 import static com.hunfrit.test.splashscreen.Constants.Constants.DIALOG;
-import static com.hunfrit.test.splashscreen.Constants.Constants.ServerErrorDialog;
+import static com.hunfrit.test.splashscreen.Constants.Constants.SERVER_ERROR_DIALOG;
 import static java.net.HttpURLConnection.HTTP_INTERNAL_ERROR;
 import static java.net.HttpURLConnection.HTTP_NOT_FOUND;
 import static java.net.HttpURLConnection.HTTP_UNAVAILABLE;
 
-public class RateForToday {
+public class RateForTodayPresenter {
 
-    boolean check;      //checking on necessary to show dialog
+    private boolean check;      //checking on necessary to show dialog
 
-    MainView view;
+    private MainView view;
 
-    public RateForToday(MainView view){
+    public RateForTodayPresenter(MainView view){
         this.view = view;
     }
 
-    List<SetGet> setGet;
-    SetGet post;
+    private List<SetGet> setGet;
+    private SetGet post;
 
-    public void getValue(Link rate){
+    public void getValue(ApiRateService rate){
 
         setGet = new ArrayList<>();
 
@@ -51,7 +52,7 @@ public class RateForToday {
                         // If NBU don`t have time to fill data, we will get the data like '[]', so we gonna get crash
                         check = true;
 
-                        view.showError(check, ServerErrorDialog);
+                        view.showError(check, SERVER_ERROR_DIALOG);
 
                         return;
                     }
@@ -66,10 +67,10 @@ public class RateForToday {
                         case HTTP_NOT_FOUND:
                         case HTTP_UNAVAILABLE:
                         case HTTP_INTERNAL_ERROR:
-                            view.showError(check, ServerErrorDialog);
+                            view.showError(check, SERVER_ERROR_DIALOG);
                             break;
                         default:
-                            view.showError(check, ServerErrorDialog);
+                            view.showError(check, SERVER_ERROR_DIALOG);
                     }
 
             }

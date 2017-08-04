@@ -1,4 +1,4 @@
-package com.hunfrit.test.splashscreen.main.presentation;
+package com.hunfrit.test.splashscreen.main.View;
 
 /**
  * Created by Anoli on 01.08.2017.

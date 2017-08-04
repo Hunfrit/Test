@@ -18,48 +18,48 @@ import android.widget.Toast;
 
 import com.hunfrit.test.R;
 import com.hunfrit.test.splashscreen.Api.Retrofit.ApiRetrofit;
-import com.hunfrit.test.splashscreen.main.presentation.MainView;
-import com.hunfrit.test.splashscreen.main.presentation.RateForToday;
-import com.hunfrit.test.splashscreen.main.presentation.RateForWeek;
+import com.hunfrit.test.splashscreen.main.View.MainView;
+import com.hunfrit.test.splashscreen.main.presentation.RateForTodayPresenter;
+import com.hunfrit.test.splashscreen.main.presentation.RateForWeekPresenter;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static com.hunfrit.test.splashscreen.Constants.Constants.DIALOG;
-import static com.hunfrit.test.splashscreen.Constants.Constants.ServerErrorDialog;
+import static com.hunfrit.test.splashscreen.Constants.Constants.SERVER_ERROR_DIALOG;
 
 
 public class MainActivity extends AppCompatActivity implements MainView{
 
-    private SwipeRefreshLayout swipeRefreshLayout;
-    private RateForWeek rateForWeek;
-    private RateForToday rateForToday;
+    private SwipeRefreshLayout mSwipeRefreshLayout;
+    private RateForWeekPresenter mRateForWeekPresenter;
+    private RateForTodayPresenter mRateForTodayPresenter;
 
-    ApiRetrofit api;
+    private ApiRetrofit mApi;
 
     MainActivityCommunicator mSendToFragment;
     MainActivityCommunicatorForWeek mSendToFragmentForWeek;
 
-    Dialog dialog;
+    private Dialog dialog;
 
-    short checkOnHide = 0;
+    private short checkOnHide = 0;
 
     @Override
     public void resultForWeekIsSuccessful(float[] resultByDate, String[] dayByDate) {
         mSendToFragmentForWeek.valueChanged(resultByDate, dayByDate);
-        swipeRefreshLayout.setRefreshing(false);
+        mSwipeRefreshLayout.setRefreshing(false);
     }
 
     @Override
     public void resultForWeekIsFailure(short fail) {
         mSendToFragmentForWeek.checkOnFail(fail);
-        swipeRefreshLayout.setRefreshing(false);
+        mSwipeRefreshLayout.setRefreshing(false);
     }
 
     @Override
     public void resultForTodayIsSuccessful(float resultForToday, String date) {
         mSendToFragment.valueChanged(resultForToday, date);
-        swipeRefreshLayout.setRefreshing(false);
+        mSwipeRefreshLayout.setRefreshing(false);
     }
 
     @Override
@@ -67,22 +67,22 @@ public class MainActivity extends AppCompatActivity implements MainView{
         if (check){
             showDialog(index);
             Log.d("TAGA", "is it work?");
-            swipeRefreshLayout.setRefreshing(false);
+            mSwipeRefreshLayout.setRefreshing(false);
         }
     }
 
     interface MainActivityCommunicator {
-        void valueChanged(Float res, String string);
+        void valueChanged(float res, String string);
 
-        void checkOnHide(Short check);
+        void checkOnHide(short check);
     }
 
     interface MainActivityCommunicatorForWeek {
         void valueChanged(float result[], String dates[]);
 
-        void checkOnFail(Short checkOnFail);
+        void checkOnFail(short checkOnFail);
 
-        void checkOnHide(Short check);
+        void checkOnHide(short check);
     }
 
     @Override
@@ -92,18 +92,18 @@ public class MainActivity extends AppCompatActivity implements MainView{
 
         Toast.makeText(getApplicationContext(), R.string.refreshOnTab, Toast.LENGTH_LONG).show();
 
-        swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe);
-        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+        mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe);
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 mSendToFragment.checkOnHide(checkOnHide = 1);
-                rateForToday = new RateForToday(MainActivity.this);
-                rateForToday.getValue(api.getRetrofit());
+                mRateForTodayPresenter = new RateForTodayPresenter(MainActivity.this);
+                mRateForTodayPresenter.getValue(mApi.getRetrofit());
 
 
                 mSendToFragmentForWeek.checkOnHide(checkOnHide = 1);
-                rateForWeek = new RateForWeek(MainActivity.this);
-                rateForWeek.execute(api.getRetrofit());
+                mRateForWeekPresenter = new RateForWeekPresenter(MainActivity.this);
+                mRateForWeekPresenter.execute(mApi.getRetrofit());
 
             }
         });
@@ -112,14 +112,14 @@ public class MainActivity extends AppCompatActivity implements MainView{
 
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
 
-        adapter.addFragment(new FragmentForToday(), "TODAY");
-        adapter.addFragment(new FragmentForWeek(), "1 WEEK");
+        adapter.addFragment(new ForTodayFragment(), "TODAY");
+        adapter.addFragment(new ForWeekFragment(), "1 WEEK");
         viewPager.setAdapter(adapter);
 
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(viewPager);
 
-        tabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
             }
@@ -131,22 +131,22 @@ public class MainActivity extends AppCompatActivity implements MainView{
             @Override
             public void onTabReselected(TabLayout.Tab tab) {
                 mSendToFragment.checkOnHide(checkOnHide = 1);       //SET (INTERFACE) checkOnHide for fragment for today - true
-                rateForToday = new RateForToday(MainActivity.this);
-                rateForToday.getValue(api.getRetrofit());
+                mRateForTodayPresenter = new RateForTodayPresenter(MainActivity.this);
+                mRateForTodayPresenter.getValue(mApi.getRetrofit());
 
                 mSendToFragmentForWeek.checkOnHide(checkOnHide = 1);        //SET (INTERFACE) checkOnHide for fragment for week - true
-                rateForWeek = new RateForWeek(MainActivity.this);
-                rateForWeek.execute(api.getRetrofit());
+                mRateForWeekPresenter = new RateForWeekPresenter(MainActivity.this);
+                mRateForWeekPresenter.execute(mApi.getRetrofit());
             }
         });
 
-        api = new ApiRetrofit(this);
+        mApi = new ApiRetrofit();
 
-        rateForToday = new RateForToday(this);
-        rateForToday.getValue(api.getRetrofit());
+        mRateForTodayPresenter = new RateForTodayPresenter(this);
+        mRateForTodayPresenter.getValue(mApi.getRetrofit());
 
-        rateForWeek = new RateForWeek(this);
-        rateForWeek.execute(api.getRetrofit());
+        mRateForWeekPresenter = new RateForWeekPresenter(this);
+        mRateForWeekPresenter.execute(mApi.getRetrofit());
     }
 
     @Override
@@ -158,7 +158,7 @@ public class MainActivity extends AppCompatActivity implements MainView{
             adb.setMessage("Please, check your network connection");
             adb.setPositiveButton("OK", null);
             dialog = adb.create();
-        } else if (id == ServerErrorDialog) {
+        } else if (id == SERVER_ERROR_DIALOG) {
             AlertDialog.Builder adb = new AlertDialog.Builder(this);
             adb.setTitle("Trouble with server");
             adb.setMessage("We`re sorry, but server is down. Please, try it later");

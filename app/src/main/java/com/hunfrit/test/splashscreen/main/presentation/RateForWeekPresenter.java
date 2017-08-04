@@ -3,8 +3,9 @@ package com.hunfrit.test.splashscreen.main.presentation;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import com.hunfrit.test.splashscreen.Interface.Link;
+import com.hunfrit.test.splashscreen.Api.ApiService.ApiRateService;
 import com.hunfrit.test.splashscreen.SetGet.SetGet;
+import com.hunfrit.test.splashscreen.main.View.MainView;
 
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
@@ -16,19 +17,19 @@ import java.util.List;
 
 import retrofit2.Response;
 
-public class RateForWeek extends AsyncTask<Link, Void, Boolean>{
+public class RateForWeekPresenter extends AsyncTask<ApiRateService, Void, Boolean>{
 
     private MainView view;
 
-    List<SetGet> setGetForWeek;
-    SetGet postForWeek;
+    private List<SetGet> setGetForWeek;
+    private SetGet postForWeek;
 
-    Short checkOnFail = 0;
+    private short checkOnFail = 0;
 
-    float[] resultByDate = new float[7];
-    String[] dayByDate = new String[7];
+    private float[] resultByDate = new float[7];
+    private String[] dayByDate = new String[7];
 
-    public RateForWeek(MainView view){
+    public RateForWeekPresenter(MainView view){
         this.view = view;
     }
 
@@ -38,7 +39,7 @@ public class RateForWeek extends AsyncTask<Link, Void, Boolean>{
     }
 
     @Override
-    protected Boolean doInBackground(Link... rate) {
+    protected Boolean doInBackground(ApiRateService... rate) {
 
         checkOnFail = 0;
 
@@ -73,9 +74,9 @@ public class RateForWeek extends AsyncTask<Link, Void, Boolean>{
         }
     }
 
-    public List<SetGet> getByDate(String date, Link rate[]) {
+    private List<SetGet> getByDate(String date, ApiRateService rate[]) {
         try {
-            Response<List<SetGet>> response = rate[0].getRateByDate(date).execute();        // rate[0] ~~~ because AsyncTask use (Link... like massive). So we take first element
+            Response<List<SetGet>> response = rate[0].getRateByDate(date).execute();        // rate[0] ~~~ because AsyncTask use (ApiRateService... like massive). So we take first element
             if (response.isSuccessful()) {
                 if (String.valueOf(response.body()) == "[]") {
 
