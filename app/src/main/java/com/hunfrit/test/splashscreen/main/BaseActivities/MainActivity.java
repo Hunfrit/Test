@@ -90,6 +90,9 @@ public class MainActivity extends AppCompatActivity implements MainView{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
 
+        mRateForTodayPresenter = new RateForTodayPresenter(MainActivity.this);
+        mRateForWeekPresenter = new RateForWeekPresenter(MainActivity.this);
+
         Toast.makeText(getApplicationContext(), R.string.refreshOnTab, Toast.LENGTH_LONG).show();
 
         mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe);
@@ -97,7 +100,6 @@ public class MainActivity extends AppCompatActivity implements MainView{
             @Override
             public void onRefresh() {
                 mSendToFragment.checkOnHide(checkOnHide = 1);
-                mRateForTodayPresenter = new RateForTodayPresenter(MainActivity.this);
                 mRateForTodayPresenter.getValue(mApi.getRetrofit());
 
 
@@ -131,7 +133,6 @@ public class MainActivity extends AppCompatActivity implements MainView{
             @Override
             public void onTabReselected(TabLayout.Tab tab) {
                 mSendToFragment.checkOnHide(checkOnHide = 1);       //SET (INTERFACE) checkOnHide for fragment for today - true
-                mRateForTodayPresenter = new RateForTodayPresenter(MainActivity.this);
                 mRateForTodayPresenter.getValue(mApi.getRetrofit());
 
                 mSendToFragmentForWeek.checkOnHide(checkOnHide = 1);        //SET (INTERFACE) checkOnHide for fragment for week - true
@@ -142,10 +143,8 @@ public class MainActivity extends AppCompatActivity implements MainView{
 
         mApi = new ApiRetrofit();
 
-        mRateForTodayPresenter = new RateForTodayPresenter(this);
         mRateForTodayPresenter.getValue(mApi.getRetrofit());
-
-        mRateForWeekPresenter = new RateForWeekPresenter(this);
+        mRateForWeekPresenter = new RateForWeekPresenter(MainActivity.this);
         mRateForWeekPresenter.execute(mApi.getRetrofit());
     }
 

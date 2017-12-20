@@ -60,7 +60,7 @@ public class RateForTodayPresenter {
                     post = setGet.get(0);
                     view.resultForTodayIsSuccessful(post.getRate(), post.getExchangedate());
                     Log.d("myLogs", "WORK " + post.getRate());
-                } else
+                } else {
                     check = true;
                     Log.d("TAGA", String.valueOf(response.code()));
                     switch (response.code()) {
@@ -72,6 +72,7 @@ public class RateForTodayPresenter {
                         default:
                             view.showError(check, SERVER_ERROR_DIALOG);
                     }
+                }
 
             }
 
