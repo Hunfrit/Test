@@ -31,7 +31,6 @@ import static com.hunfrit.test.splashscreen.Constants.Constants.SERVER_ERROR_DIA
 
 public class MainActivity extends AppCompatActivity implements MainView{
 
-    private SwipeRefreshLayout mSwipeRefreshLayout;
     private RateForWeekPresenter mRateForWeekPresenter;
     private RateForTodayPresenter mRateForTodayPresenter;
 
@@ -47,19 +46,16 @@ public class MainActivity extends AppCompatActivity implements MainView{
     @Override
     public void resultForWeekIsSuccessful(float[] resultByDate, String[] dayByDate) {
         mSendToFragmentForWeek.valueChanged(resultByDate, dayByDate);
-        mSwipeRefreshLayout.setRefreshing(false);
     }
 
     @Override
     public void resultForWeekIsFailure(short fail) {
         mSendToFragmentForWeek.checkOnFail(fail);
-        mSwipeRefreshLayout.setRefreshing(false);
     }
 
     @Override
     public void resultForTodayIsSuccessful(float resultForToday, String date) {
         mSendToFragment.valueChanged(resultForToday, date);
-        mSwipeRefreshLayout.setRefreshing(false);
     }
 
     @Override
@@ -67,7 +63,6 @@ public class MainActivity extends AppCompatActivity implements MainView{
         if (check){
             showDialog(index);
             Log.d("TAGA", "is it work?");
-            mSwipeRefreshLayout.setRefreshing(false);
         }
     }
 
@@ -94,21 +89,6 @@ public class MainActivity extends AppCompatActivity implements MainView{
         mRateForWeekPresenter = new RateForWeekPresenter(MainActivity.this);
 
         Toast.makeText(getApplicationContext(), R.string.refreshOnTab, Toast.LENGTH_LONG).show();
-
-        mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe);
-        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                mSendToFragment.checkOnHide(checkOnHide = 1);
-                mRateForTodayPresenter.getValue(mApi.getRetrofit());
-
-
-                mSendToFragmentForWeek.checkOnHide(checkOnHide = 1);
-                mRateForWeekPresenter = new RateForWeekPresenter(MainActivity.this);
-                mRateForWeekPresenter.execute(mApi.getRetrofit());
-
-            }
-        });
 
         ViewPager viewPager = (ViewPager) findViewById(R.id.pager);
 
